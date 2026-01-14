@@ -20,6 +20,11 @@
 ))}
 </select>
 
+const ratingCirclesArray =  [...Array(4)]
+  .map((_,i) => 
+    <span key={i} className={cn('block w-2.5 h-2.5 rounded-full text-xs', i < ratingNumber ? bgColour[cqcRating].value : 'bg-iron')}></span>
+  )
+
 //get current date and add days to it
 let date = new Date("21 July 2023")
 date.setDate(date.getDate() + count)
@@ -377,12 +382,38 @@ const getServiceCentres = async () => {
     setServiceCenterDropDown(scentre);
   });
 };
+
+//FILTERS - Custom object
 const customFields = this.context.product.custom_fields.filter(field => field.name === "IntroOffer" || field.name === "custom_badge")
   .map(field => ({
   name: field.name,
   value: field.value,
   })
 );
+//-----------------
+
+const ratingCirles = (ratingNumber: number = 0) => {
+  const cqcRatingData =  clinicRatingMetrics.ratingDescription
+    .filter((rating) => rating.score === ratingNumber)
+    .map(rating => ({
+      theRating: rating.rating,
+      theLabel: rating.label})
+    );
+
+  const cqcRating = cqcRatingData[0].theRating as CQCRatingTypes
+
+  //create an array of length 4. populate the array by mapping it
+  const ratingCirclesArray =  [...Array(4)]
+    .map((_,i) => 
+      <span key={i} className={cn('block w-2.5 h-2.5 rounded-full text-xs', i < ratingNumber ? bgColour[cqcRating].value : 'bg-iron')}></span>
+    )
+  return (
+    <>
+      <p className='text-charcoal text-sm mr-1'>{cqcRatingData[0].theLabel}</p>
+      {ratingCirclesArray}
+    </>
+  )  
+}
 
 // Sorting data into numerical order 
 const toSort = () => {
@@ -446,6 +477,17 @@ this.context.product.custom_fields.reduce((ourCustomValues,field)=> {
 //initial values
 },{introOffer:null, customBadge: null})
 
+//Some - when you need to check if at least one element meets a condition and a boolean result (true or false) is sufficient
+// then .map over that new array creating new named object
+const treatmentClinics = clinicsData.clinic
+  .filter((c) => c.procedures
+    ?.some((p) => p.procedureSlug === treatment))
+  ?.map((c) => {
+    return{ 
+      treatmentClinic: c, 
+      procedure: c.procedures.filter((p) => p.procedureSlug === treatment)
+    }
+  })
 
 // Modern switch statement for typescript is a type Record
 // Call function, passing in the parameter, which calls another function with the possible return
