@@ -540,3 +540,42 @@ observer.observe(document.querySelector("#layout-wrapper"), {
     const [year, month, day] = nextMonthDateStr.split('-');
     paymentStartDateFormatted = `${year}-${month}-${paymentStartDate}`;
   }
+
+//----------------------------------------------------------------
+//recounting to 5 repeatedly
+   const [bgGradientNumber, setBgGradientNumber] = useState(1);
+
+useEffect(() => {
+    const imageTimer = setInterval(() => {
+      setBgGradientNumber((prev) => {
+        if (prev >= 5) {
+          return 1; // reset to 1
+        }
+        return prev + 1; // increment
+      });
+    }, 5000);
+    return () => {clearInterval(imageTimer)} ; // cleanup on unmount
+  }, []);
+
+//  ----------------------------------------
+// mapping a very nested JSON to filter the data where a clinic does a procedure
+
+  const { treatment } = await params
+  // can use useMemo() if used inside a client component 
+  // const treatmentClinics = useMemo(() => clinicsData.clinic.flatMap....
+  const treatmentClinics = clinicsData.clinic.flatMap(clinic =>
+  clinic.locations
+    .filter(location =>
+      location.procedures.some(p => p.procedureSlug === treatment)
+    )
+    .map(location => ({
+      treatmentClinic: location.name,
+      procedures: location.procedures.filter(
+        p => p.procedureSlug === treatment
+      )
+    }))
+  );
+
+//   If you ever see
+// map().filter().map()
+// and get weird empty results → you probably want flatMap()
