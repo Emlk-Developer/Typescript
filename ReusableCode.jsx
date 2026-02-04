@@ -576,6 +576,37 @@ useEffect(() => {
     }))
   );
 
+  const procedure = procedures?.filter((proc) => proc.procedureSlug === treatmentSlug )
+  .map((p) => ({
+    price: p.price, 
+    name:p.procedure
+  }))
+
+  locationProcedures.flatMap((p) => p?.some((s) => s.isSurgical)).includes(true)
+
+  //using flatMap twice because the JSON is an array of arrays
+  const allTreatments= treatmentClinics.flatMap((loc) => loc.locations
+  .flatMap((p : LocationsProps) => p.procedures?.filter((p) => p.procedureSlug === treatmentSlug)
+    .map((p) => ({
+      procedure: p.procedure, 
+      price: p.price
+    }))
+  ))
+
 //   If you ever see
 // map().filter().map()
 // and get weird empty results → you probably want flatMap()
+
+//dispatchEvent() is what notifies the rest of the app that the value changed
+// - Updates the value
+// - Triggers event listeners
+// - Mimics real user typing
+// Notifies:
+// - addEventListener("input", ...)
+// - Framework state bindings
+// - Validation logic
+// - Form libraries 
+
+const input = document.querySelector('input[formcontrolname="numberOfBedrooms"]');
+input.value = '3';
+input.dispatchEvent(new Event('input', { bubbles: true }))
