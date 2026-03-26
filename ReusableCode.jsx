@@ -610,3 +610,51 @@ useEffect(() => {
 const input = document.querySelector('input[formcontrolname="numberOfBedrooms"]');
 input.value = '3';
 input.dispatchEvent(new Event('input', { bubbles: true }))
+
+
+//refire event until variable exists
+
+function showValidationMessage(show) {
+  if(!document.querySelector('.tile-validation-message') && !document.querySelector('.cover-type-title')) {
+    setTimeout(() => showValidationMessage(show),100);
+    return;
+  }
+  document.querySelector('.tile-validation-message').style.display = show ? 'block' : 'none';
+  document.querySelector('.cover-type-title').classList.toggle('error', show);
+  document.querySelector('.cover-type-title').classList.toggle('default', !show);
+}
+
+
+// destructure contacts object to just pick out the address, rename address to be addr.
+//using .some returns a boolean. Is the addr.line1 in the address.line1 
+const hasMatchingAddress = contacts.some(({ address: addr }) => {
+  if (!addr) return false;
+
+  return (
+    addr.line1?.includes(address.line1) &&
+    addr.postcode?.includes(address.postcode)
+  );
+});
+
+//Version	Checks
+!== null	//Only excludes null
+!= null	//Excludes null and undefined (often safer)
+
+//Instead of using a 3,4 way ternary, use a Record instead
+const widthMap: Record<string, string> = {
+  full: "max-w-full",
+  lg: "max-w-screen-lg",
+  xl: "max-w-screen-xl",
+  sm: "md:max-w-[350px]",
+};
+
+//none of the options match, then return md:max-w-screen-md
+const dialogWidth = widthMap[width] ?? "md:max-w-screen-md"
+
+//instead of writing
+condition ? condition : fallback
+
+//it can be refactored to be
+condition || fallback
+// If the condition is truthy, it will be returned.
+// Otherwise, it falls back to the fallback
