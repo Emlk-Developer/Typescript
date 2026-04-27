@@ -658,3 +658,64 @@ condition ? condition : fallback
 condition || fallback
 // If the condition is truthy, it will be returned.
 // Otherwise, it falls back to the fallback
+
+// Your TypeScript interface is now outdated for Next.js 15+ / 16.
+// You typed params as a synchronous object:
+
+interface PageProps {
+  params: {
+    page: string[];
+  };
+}
+
+// But in Next.js 16: params is actually a Promise So at runtime, this is happening:
+props.params // 👉 Promise<{ page: string[] }>
+
+// Which is why Next complains when you access:
+
+props?.params?.page // ❌ accessing before await
+
+interface PageProps {
+  params: Promise<{
+    page: string[];
+  }>;
+}
+
+export default async function Page(props: PageProps) {
+  const { page } = await props.params;
+}
+
+// In Next.js 15+, always assume route data is async:
+// 🧠 Quick mental model going forward (Next 15/16)
+// Any time you're in the App Router, assume these are async:
+
+** params ** 
+** searchParams ** 
+** headers() ** 
+** cookies() ** 
+
+// 👉 Default instinct now:
+// const data = await something;
+// ⚡ Pro tip (will save you time later)
+// If you ever see errors like:
+
+"must be unwrapped with await or React.use()"
+"is a Promise"
+
+// → immediately suspect async route data
+// params
+// searchParams
+
+//---------------------------------------------------------------------
+
+// In suitations where you want to cast a type but the response could be null
+// Type '(IWishlistItem | null)[]' is not assignable to type 'IWishlistItem[]'.
+
+// You can create a typeguard to filter out any instance of null to ensure the type.
+// in the first instance mapping over each item could return an empty value or null, so after it's mapped, filter where the item is !== null
+
+const wlproducts = (
+  await Promise.all(
+    responseIds.map((item) => getWishListItemProduct(item))
+  )
+).filter((item): item is IWishlistItem => item !== null);
