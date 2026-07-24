@@ -719,3 +719,27 @@ const wlproducts = (
     responseIds.map((item) => getWishListItemProduct(item))
   )
 ).filter((item): item is IWishlistItem => item !== null);
+
+//---------------------------------------------------------
+
+//mapping over an object where the path matches the current pathname. If there is a match access the other values on that key.
+
+  const twentyOffGiftsPathnames = [
+    { path: "/gifts/sale", text: "Selected Gifts" },
+    { path: "/gifts/flowers/all-flowers", text: "Flowers" },
+    { path: "/gifts/alcohol/personalised-alcohol", text: "Personalised Alcohol" },
+    { path: "/gifts/anniversary", text: "Flowers & Personalised Alcohol" },
+    { path: "/gifts/wedding", text: "Flowers & Personalised Alcohol" },
+  ];
+
+  const matchedOffer = twentyOffGiftsPathnames.find((item) => item.path === pathname);
+  const show20offOffer = Boolean(matchedOffer);
+  const bespokeBannerText = matchedOffer?.text;
+
+  //-----------------------------------------------------------------
+
+  //when the state changes from the previous state do something, when it goes back, do something else. "toggle"
+setIsSearchBarExpanded((prev) => (prev === shouldShow ? prev : shouldShow));
+
+//when the state changes from the previous state do something, regardless of any future state changes
+setIsSearchBarExpanded((prev) => prev || shouldShow);
